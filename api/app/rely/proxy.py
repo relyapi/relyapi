@@ -17,6 +17,7 @@ async def forward(request: Request):
     body = data.get("body", None)
 
     # 将数据再次转发到serverless进行处理
+    # 提供插件 那么就是 header信息的填充
     async with httpx.AsyncClient() as client:
         resp = await client.request(method, url, headers=headers, content=body)
         return resp.content  # 自动透传

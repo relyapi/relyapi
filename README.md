@@ -21,3 +21,9 @@
     2. 自动代理服务
     3. 账号服务
 ```
+
+## 参考
+
+```
+https://github.com/langgenius/dify-plugin-sdks/blob/main/python/examples/agent/strategies/ReAct.py
+```
