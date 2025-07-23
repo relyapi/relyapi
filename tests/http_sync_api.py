@@ -1,6 +1,7 @@
 import time
 
 import httpx
+from charset_normalizer import from_bytes
 
 from tranport import ForwardingTransport
 
@@ -43,7 +44,11 @@ url = 'https://h5api.m.taobao.com/h5/mtop.taobao.pcdetail.data.get/1.0/'
 start = time.time()
 resp = client.get(url=url, params=body, headers=headers)
 end = time.time()
-print(resp.json())
+print(resp.text)
 print(end - start)
+
+# detected = from_bytes(resp.content).best()
+# decoded_text = detected.text if detected else resp.content.decode('utf-8', errors='replace')
+
 
 print(client.get(url='https://www.baidu.com').text)
