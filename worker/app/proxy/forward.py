@@ -2,6 +2,7 @@ import httpx
 from fastapi import Request, APIRouter
 from httpx import Proxy
 from loguru import logger
+from starlette.responses import Response
 
 from plugins import plugin_manager
 from utils.common_utils import extract_main_domain
@@ -55,13 +56,22 @@ async def forward(request: Request):
     # 不使用tls直接配置代理
     proxy = Proxy("http://127.0.0.1:7897")
 
+    # client: httpx.AsyncClient = request.app.state.client
+
     try:
         async with httpx.AsyncClient(
                 proxy=proxy if plugin.use_proxy else None,
                 transport=tls_factory(proxy) if plugin.use_tls else None
         ) as client:
             resp = await client.request(**result.model_dump(by_alias=True))
-            return resp.content
+            if "application/json" in resp.headers.get("content-type", ""):
+                return resp.json()
+            else:
+                return Response(
+                    content=resp.content,
+                    status_code=resp.status_code,
+                    media_type=resp.headers.get("content-type", "application/octet-stream")
+                )
     except Exception as e:
         logger.error(e)
         raise HttpxCallFail(e)
