@@ -22,7 +22,7 @@ jobs:
       - name: Build and push image
         run: |
           echo "Building image: $IMAGE_ID:$VERSION"
-          docker build . --file Dockerfile --tag $IMAGE_ID:$VERSION
+          docker build . --file ./worker/Dockerfile --tag $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
         env:
           IMAGE_ID: ${{ env.IMAGE_ID }}

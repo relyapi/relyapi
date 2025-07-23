@@ -7,7 +7,7 @@ RELY_API_ADDRESS = os.environ.get("RELY_API_ADDRESS", 'http://127.0.0.1:8000')
 
 class ForwardingTransport(httpx.BaseTransport):
     def __init__(self):
-        self._client = httpx.Client()
+        self._client = httpx.Client(base_url=RELY_API_ADDRESS)
 
     def handle_request(self, request: httpx.Request) -> httpx.Response:
         payload = {
@@ -17,7 +17,7 @@ class ForwardingTransport(httpx.BaseTransport):
             "body": request.read().decode("utf-8") if request.content else None
         }
 
-        forward_resp = self._client.post(f"{RELY_API_ADDRESS}/rely/worker/proxy/forward", json=payload)
+        forward_resp = self._client.post("/rely/worker/bypass/forward", json=payload)
 
         return httpx.Response(
             status_code=forward_resp.status_code,
@@ -32,7 +32,7 @@ class ForwardingTransport(httpx.BaseTransport):
 
 class AsyncForwardingTransport(httpx.AsyncBaseTransport):
     def __init__(self):
-        self._client = httpx.AsyncClient()
+        self._client = httpx.AsyncClient(base_url=RELY_API_ADDRESS)
 
     async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
         payload = {
@@ -43,7 +43,7 @@ class AsyncForwardingTransport(httpx.AsyncBaseTransport):
         }
 
         forward_resp = await self._client.post(
-            f"{RELY_API_ADDRESS}/rely/worker/proxy/forward", json=payload
+            "/rely/worker/bypass/forward", json=payload
         )
         return httpx.Response(
             status_code=forward_resp.status_code,
