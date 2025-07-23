@@ -1,9 +1,10 @@
 import importlib
 import os
+from abc import abstractmethod
 from typing import Dict, Optional
 
 from loguru import logger
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from utils.exceptions import DomainNotFound
 
@@ -12,12 +13,24 @@ class RequestModel(BaseModel):
     method: str
     url: str
     headers: Optional[Dict[str, str]] = {}
-    json: Optional[Dict] = None
+    body: Optional[Dict] = Field(default=None, alias="json")
+
+    class Config:
+        populate_by_name = True
 
 
 class BasePlugin:
     domain = ""
 
+    # biz open
+    use_process = False  # 是否使用进程模式执行
+    use_tls = False
+    use_proxy = False
+    use_drissionpage = False
+
+    timeout = 5
+
+    @abstractmethod
     def invoke(self, url, method, headers, body=None) -> RequestModel:
         raise NotImplementedError("Subclasses must implement this method")
 

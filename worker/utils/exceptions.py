@@ -18,6 +18,11 @@ class DomainNotFound(UnicornException):
         super().__init__("Domain not found", 301)
 
 
+class HttpxCallFail(UnicornException):
+    def __init__(self, err_msg):
+        super().__init__(err_msg, 302)
+
+
 def register_exception(app: FastAPI):
     """
     异常

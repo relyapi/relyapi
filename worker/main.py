@@ -8,6 +8,7 @@ from loguru import logger
 from app.router import router
 from plugins import load_plugins
 from utils.exceptions import register_exception
+from utils.middleware import RequestIDMiddleware
 
 
 @asynccontextmanager
@@ -21,6 +22,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(root_path='/rely/worker', lifespan=lifespan)
+app.add_middleware(RequestIDMiddleware)
 
 
 @app.get("/healthz")

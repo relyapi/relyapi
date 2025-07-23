@@ -4,13 +4,13 @@ import requests
 from cachetools import TTLCache
 
 from plugins import BasePlugin, RequestModel
-from utils.param import replace_cookie, replace_query_param
-from utils.retry import retry_strategy
-from utils.util import gen_md5
+from utils.common_utils import retry_strategy, gen_md5
+from utils.cookie_utils import replace_cookie, replace_query_param
 
 
 class TaobaoPlugin(BasePlugin):
     domain = "taobao.com"
+    use_tls = False
     cache = TTLCache(maxsize=100, ttl=3600)
 
     @retry_strategy
