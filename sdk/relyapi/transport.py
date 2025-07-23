@@ -14,7 +14,7 @@ class ForwardingTransport(httpx.BaseTransport):
             "body": request.read().decode("utf-8") if request.content else None
         }
 
-        forward_resp = httpx.post(f"{RELY_API_ADDRESS}/rely/proxy/forward", json=payload)
+        forward_resp = httpx.post(f"{RELY_API_ADDRESS}/rely/worker/proxy/forward", json=payload)
 
         return httpx.Response(
             status_code=forward_resp.status_code,
@@ -34,7 +34,7 @@ class AsyncForwardingTransport(httpx.AsyncBaseTransport):
         }
 
         async with httpx.AsyncClient() as client:
-            forward_resp = await client.post(f"{RELY_API_ADDRESS}/rely/proxy/forward", json=payload)
+            forward_resp = await client.post(f"{RELY_API_ADDRESS}/rely/worker/proxy/forward", json=payload)
 
         return httpx.Response(
             status_code=forward_resp.status_code,

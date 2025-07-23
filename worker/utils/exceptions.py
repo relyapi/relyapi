@@ -13,6 +13,11 @@ class UnicornException(Exception):
         self.code = code
 
 
+class DomainNotFound(UnicornException):
+    def __init__(self):
+        super().__init__("Domain not found", 301)
+
+
 def register_exception(app: FastAPI):
     """
     异常
