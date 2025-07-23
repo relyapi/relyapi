@@ -14,7 +14,7 @@ jobs:
       - name: Set version env
         run: |
           echo "IMAGE_ID=registry.cn-beijing.aliyuncs.com/biyao/public" >> $GITHUB_ENV
-          echo "VERSION=${GITHUB_REPOSITORY##*/}-${GITHUB_SHA::7}" >> $GITHUB_ENV
+          echo "VERSION=server-${GITHUB_REPOSITORY##*/}-${GITHUB_SHA::7}" >> $GITHUB_ENV
 
       - name: Log into registry
         run: echo "${{ secrets.ALIYUN_REGISTRY_PASSWORD }}" | docker login ${{ secrets.ALIYUN_REGISTRY_HOSTNAME }} -u ${{ secrets.ALIYUN_REGISTRY_USERNAME }} --password-stdin
@@ -22,7 +22,7 @@ jobs:
       - name: Build and push image
         run: |
           echo "Building image: $IMAGE_ID:$VERSION"
-          docker build . --file ./server/Dockerfile --tag $IMAGE_ID:$VERSION
+          docker build . --file Dockerfile --tag $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
         env:
           IMAGE_ID: ${{ env.IMAGE_ID }}
