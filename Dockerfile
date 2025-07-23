@@ -4,7 +4,7 @@ FROM registry.cn-beijing.aliyuncs.com/biyao/public:py310-v3 AS base
 WORKDIR /app/api
 
 # Install Poetry
-ENV POETRY_VERSION=1.8.3
+ENV POETRY_VERSION=2.1
 RUN pip install --no-cache-dir poetry==${POETRY_VERSION}
 
 # Configure Poetry
