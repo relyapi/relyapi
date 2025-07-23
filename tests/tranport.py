@@ -2,9 +2,9 @@ import os
 
 import httpx
 
-# RELY_API_ADDRESS = os.environ.get("RELY_API_ADDRESS", 'http://127.0.0.1:8000')
+RELY_API_ADDRESS = os.environ.get("RELY_API_ADDRESS", 'http://127.0.0.1:8000')
 
-RELY_API_ADDRESS = os.environ.get("RELY_API_ADDRESS", 'http://49.232.171.141:8001')
+# RELY_API_ADDRESS = os.environ.get("RELY_API_ADDRESS", 'http://49.232.171.141:8001')
 
 
 class ForwardingTransport(httpx.BaseTransport):

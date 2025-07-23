@@ -65,16 +65,13 @@ async def forward(request: Request):
                 timeout=5
         ) as client:
             resp = await fetch_with_retry(client, result.model_dump(by_alias=True))
-            # resp = await client.request(**result.model_dump(by_alias=True))
-            logger.info(f"resp: {resp}")
-            if "application/json" in resp.headers.get("content-type", ""):
-                return resp.json()
-            else:
-                return Response(
-                    content=resp.content,
-                    status_code=resp.status_code,
-                    media_type=resp.headers.get("content-type", "application/octet-stream")
-                )
+            logger.info(f"resp: {resp.text}")
+            return Response(
+                content=resp.content,
+                status_code=resp.status_code,
+                media_type=resp.headers.get("content-type", "application/octet-stream")
+            )
+
     except Exception as e:
         logger.error(e)
         raise HttpxCallFail(e)
