@@ -10,7 +10,7 @@ from utils.cookie_utils import replace_cookie, replace_query_param
 
 class TaobaoPlugin(BasePlugin):
     domain = "h5api.m.taobao.com"
-    use_tls = False
+    use_proxy = True
     cache = TTLCache(maxsize=100, ttl=3600)
 
     @retry_strategy

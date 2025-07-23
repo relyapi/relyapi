@@ -1,10 +1,12 @@
-import httpx
 from curl_cffi import CurlOpt
+from httpx import Proxy
 
 from utils.transport import AsyncCurlTransport
 
 
-def tls_factory(proxy: httpx.Proxy):
+def tls_factory(proxy: str):
+    proxy = Proxy(proxy) if proxy else None
+
     transport = AsyncCurlTransport(
         impersonate="chrome",
         proxy=proxy,
