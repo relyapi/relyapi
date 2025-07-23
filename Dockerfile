@@ -38,4 +38,4 @@ COPY --from=packages ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
 # Copy source code
-COPY . /app/ap
+COPY . /app/api
