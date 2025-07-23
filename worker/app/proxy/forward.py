@@ -45,16 +45,9 @@ async def forward(request: Request):
         use_process=False  # 切换 True 试试强隔离
     )
 
-    # 按域名配置开关 代理
-    # 将数据再次转发到serverless进行处理
-    # 提供插件 那么就是 header信息的填充
-    # tls统一进行处理修改 借鉴 https://curl-cffi.readthedocs.io/en/latest/impersonate.html
-    # https://github.com/vgavro/httpx-curl-cffi
-
-    #
     # 使用隧道代理 封装隧道代理 根据用户名自行返回代理
     # 不使用tls直接配置代理
-    proxy = Proxy("http://127.0.0.1:7897")
+    proxy = Proxy("http://0409240A:E6BD46C9C436@223.247.198.160:26641")
 
     # client: httpx.AsyncClient = request.app.state.client
 
@@ -65,7 +58,6 @@ async def forward(request: Request):
                 timeout=5
         ) as client:
             resp = await fetch_with_retry(client, result.model_dump(by_alias=True))
-            logger.info(f"resp: {resp.text}")
             return Response(
                 content=resp.content,
                 status_code=resp.status_code,
