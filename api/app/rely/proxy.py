@@ -1,11 +1,14 @@
 import httpx
-import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import APIRouter, Request
 
-app = FastAPI()
+router = APIRouter(
+    prefix='/proxy',
+    tags=['代理服务'],
+    responses={404: {'description': 'Not found'}},
+)
 
 
-@app.post("/forward")
+@router.post("/forward")
 async def forward(request: Request):
     data = await request.json()
     method = data["method"]
@@ -13,10 +16,7 @@ async def forward(request: Request):
     headers = data.get("headers", {})
     body = data.get("body", None)
 
+    # 将数据再次转发到serverless进行处理
     async with httpx.AsyncClient() as client:
         resp = await client.request(method, url, headers=headers, content=body)
         return resp.content  # 自动透传
-
-
-if __name__ == '__main__':
-    uvicorn.run(app, host="127.0.0.1", port=9000)
