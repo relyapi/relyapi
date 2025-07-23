@@ -11,7 +11,7 @@ class ForwardingTransport(httpx.BaseTransport):
         }
 
         # 将请求内容转发到你自己的服务
-        forward_resp = httpx.post("http://127.0.0.1:9000/forward", json=payload)
+        forward_resp = httpx.post("http://127.0.0.1:8000/rely/worker/proxy/forward", json=payload)
 
         # 构造 httpx.Response 返回给上层
         return httpx.Response(
@@ -32,7 +32,7 @@ class AsyncForwardingTransport(httpx.AsyncBaseTransport):
         }
 
         async with httpx.AsyncClient() as client:
-            forward_resp = await client.post("http://127.0.0.1:9000/forward", json=payload)
+            forward_resp = await client.post("http://127.0.0.1:9000/rely/worker/proxy/forward", json=payload)
 
         return httpx.Response(
             status_code=forward_resp.status_code,

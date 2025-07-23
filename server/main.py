@@ -2,15 +2,9 @@ import socketio
 import uvicorn
 from fastapi import FastAPI
 
-from app.router import router
 from app.task import sio
-from utils.exception import register_exception
 
-app = FastAPI(root_path='/rely')
-
-register_exception(app)
-
-app.include_router(router)
+app = FastAPI(root_path='/rely/server')
 
 socket_app = socketio.ASGIApp(sio, app)
 
