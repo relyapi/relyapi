@@ -1,6 +1,7 @@
 import importlib
 import os
 from abc import abstractmethod
+from enum import Enum
 from typing import Dict, Optional
 
 from loguru import logger
@@ -19,14 +20,17 @@ class RequestModel(BaseModel):
         populate_by_name = True
 
 
-class BasePlugin:
-    domain = ""
+class BypassType(Enum):
+    RAW = "RAW"
+    TLS = "TLS"
 
-    # biz open
-    use_process = False  # 是否使用进程模式执行
-    use_tls = False
-    use_proxy = False
-    use_drissionpage = False
+
+class BasePlugin:
+    domain: str
+
+    use_process: bool = False  # 是否使用进程模式执行
+    use_proxy: bool = False  # 是否使用代理
+    bypass_type: BypassType = BypassType.RAW  # 使用什么请求类型
 
     timeout = 5
 
