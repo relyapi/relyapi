@@ -1,7 +1,7 @@
 import os
 from contextlib import asynccontextmanager
 
-import httpx
+import socketio
 import uvicorn
 from fastapi import FastAPI
 from loguru import logger
@@ -10,18 +10,25 @@ from app.router import router
 from plugins import load_plugins
 from utils.exceptions import register_exception
 
+sio_client: socketio.AsyncClient = socketio.AsyncClient(
+    reconnection=True,
+    reconnection_attempts=5,
+    reconnection_delay=1
+)
+RELY_SOCKETIO_ADDRESS = os.environ.get('RELY_SOCKETIO_ADDRESS', 'http://127.0.0.1:8500')
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # 加载插件
     load_plugins(os.getcwd())
-    app.state.client = httpx.AsyncClient()
+    await sio_client.connect(RELY_SOCKETIO_ADDRESS)
+    await sio_client.emit("register", {"msg": "Hello from FastAPI"})
 
     logger.info("Startup event is done.")
 
     yield
-
-    await app.state.client.aclose()
+    await sio_client.disconnect()
     logger.info("shutdown event is done.")
 
 
