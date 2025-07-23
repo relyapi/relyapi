@@ -5,7 +5,7 @@ from loguru import logger
 from starlette.responses import Response
 
 from plugins import plugin_manager
-from utils.common_utils import extract_main_domain
+from utils.common_utils import extract_main_domain, fetch_with_retry
 from utils.exceptions import HttpxCallFail
 from utils.plugin_invoker import PluginInvoker
 from utils.tls_utils import tls_factory
@@ -61,9 +61,12 @@ async def forward(request: Request):
     try:
         async with httpx.AsyncClient(
                 proxy=proxy if plugin.use_proxy else None,
-                transport=tls_factory(proxy) if plugin.use_tls else None
+                transport=tls_factory(proxy) if plugin.use_tls else None,
+                timeout=5
         ) as client:
-            resp = await client.request(**result.model_dump(by_alias=True))
+            resp = await fetch_with_retry(client, result.model_dump(by_alias=True))
+            # resp = await client.request(**result.model_dump(by_alias=True))
+            logger.info(f"resp: {resp}")
             if "application/json" in resp.headers.get("content-type", ""):
                 return resp.json()
             else:
