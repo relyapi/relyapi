@@ -21,7 +21,7 @@ def hello(a, b, c):
 
 
 async def start_server():
-    await sio.connect('http://localhost:5000')
+    await sio.connect('http://49.232.171.141:8500')
     await sio.wait()
 
 
