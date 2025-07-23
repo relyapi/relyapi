@@ -1,4 +1,10 @@
+import os
+
 import httpx
+
+RELY_API_ADDRESS = os.environ.get("RELY_API_ADDRESS", 'http://127.0.0.1:8000')
+
+# RELY_API_ADDRESS = os.environ.get("RELY_API_ADDRESS", 'http://49.232.171.141:8001')
 
 
 class ForwardingTransport(httpx.BaseTransport):
@@ -11,7 +17,7 @@ class ForwardingTransport(httpx.BaseTransport):
         }
 
         # 将请求内容转发到你自己的服务
-        forward_resp = httpx.post("http://127.0.0.1:8000/rely/worker/proxy/forward", json=payload)
+        forward_resp = httpx.post(f"{RELY_API_ADDRESS}/rely/worker/proxy/forward", json=payload)
 
         # 构造 httpx.Response 返回给上层
         return httpx.Response(
