@@ -45,3 +45,5 @@ resp = client.get(url=url, params=body, headers=headers)
 end = time.time()
 print(resp.json())
 print(end - start)
+
+print(client.get(url='https://www.baidu.com').text)

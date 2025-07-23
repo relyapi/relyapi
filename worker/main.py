@@ -1,6 +1,7 @@
 import os
 from contextlib import asynccontextmanager
 
+import httpx
 import uvicorn
 from fastapi import FastAPI
 from loguru import logger
@@ -14,9 +15,13 @@ from utils.exceptions import register_exception
 async def lifespan(app: FastAPI):
     # 加载插件
     load_plugins(os.getcwd())
+    app.state.client = httpx.AsyncClient()
+
     logger.info("Startup event is done.")
 
     yield
+
+    await app.state.client.aclose()
     logger.info("shutdown event is done.")
 
 

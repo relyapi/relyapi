@@ -10,8 +10,8 @@ from utils.exceptions import DomainNotFound
 
 
 class RequestModel(BaseModel):
-    method: str
     url: str
+    method: str
     headers: Optional[Dict[str, str]] = {}
     body: Optional[Dict] = Field(default=None, alias="json")
 
@@ -39,10 +39,10 @@ class PluginManager:
     def __init__(self):
         self.plugins: Dict[str, BasePlugin] = {}
 
-    def register(self, crawler):
-        if not issubclass(crawler, BasePlugin):
-            raise TypeError(f"{crawler.__name__} 必须继承自 BasePlugin")
-        instance_obj = crawler()
+    def register(self, plugin):
+        if not issubclass(plugin, BasePlugin):
+            raise TypeError(f"{plugin.__name__} 必须继承自 BasePlugin")
+        instance_obj = plugin()
         if isinstance(instance_obj.domain, list):
             for domain in instance_obj.domain:
                 self.plugins[domain] = instance_obj
@@ -73,5 +73,5 @@ def load_plugins(plugins_path):
                         and issubclass(attr, module.BasePlugin)
                         and attr is not module.BasePlugin
                 ):
-                    logger.info(f"Loading {attr.__class__.__name__} from {module_name}")
+                    logger.info(f"Loading {attr.domain} from {module_name}")
                     plugin_manager.register(attr)

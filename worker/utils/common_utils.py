@@ -11,13 +11,12 @@ retry_strategy = retry(
 
 def extract_main_domain(host: str) -> str:
     """
-    提取主域名，例如：
-    'api.dev.taobao.com' -> 'taobao.com'
+    提取域名
     """
     result = tldextract.extract(host)
     if not result.domain or not result.suffix:
-        return host  # 无法提取时返回原始 host
-    return f"{result.domain}.{result.suffix}"
+        return host
+    return f"{result.subdomain}.{result.domain}.{result.suffix}"
 
 
 def gen_md5(content):
