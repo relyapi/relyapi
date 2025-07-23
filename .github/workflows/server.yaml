@@ -35,7 +35,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           password: ${{ secrets.REMOTE_PASSWORD }}
           script: |
-            cd /root/deploy/rely/worker
+            cd /root/deploy/rely/server
             echo "Updating image version in docker-compose.yaml..."
             echo "IMAGE_ID=${{ env.IMAGE_ID }}" > .env
             echo "VERSION=${{ env.VERSION }}" >> .env
