@@ -5,7 +5,7 @@ from fastapi import Request, APIRouter
 from loguru import logger
 from starlette.responses import Response
 
-from plugins import plugin_manager, BypassType, RequestModel
+from plugins import plugin_manager, BypassType
 from utils.common_utils import extract_main_domain, fetch_with_retry
 from utils.exceptions import HttpxCallFail
 from utils.plugin_invoker import PluginInvoker
@@ -31,33 +31,28 @@ async def forward(request: Request):
     data = await request.json()
     method = data["method"]
     url = data["url"]
-    headers = data.get("headers", {})
-    body = data.get("body", None)
+    headers = data.get("headers") or {}
+    body = data.get("body") or {}
 
     domain = extract_main_domain(url)
 
     logger.info(f"domain: {domain}")
 
     plugin = plugin_manager.get(domain)
-    if plugin:
-        # 走账号代理池   看是否可以借鉴 openclash 进行代理  根据域名进行自动路由
-        # 基于 clash 进行二次开发
-        # 使用隧道代理 封装隧道代理 根据用户名自行返回代理
-        # 不使用tls直接配置代理
-        # 只有 use_proxy为true 才会查询代理 如果 use_proxy为false proxy直接返回空
-        # 直接存储在内存 server只有一个  根据域名以及策略   domain + interface + account
-        # 注意 如果涉及到 cookie 和 ip 绑定的情况  如何处理
-        # 外部 http 指定需要那个账户  x-rely-account=xxx
-        # 代理ip有一定的下发策略   主动查询？？ gin提供
-        proxy = os.environ.get('PROXY_IP')
-        result = await plugin_invoker.invoke(
-            plugin, url, method, headers, body
-        )
-    else:
-        # 兜底
-        # 走普通的代理池
-        proxy = None
-        result = RequestModel(url=url, method=method, headers=headers, json=body)
+    # 走账号代理池   看是否可以借鉴 openclash 进行代理  根据域名进行自动路由
+    # 基于 clash 进行二次开发
+    # 使用隧道代理 封装隧道代理 根据用户名自行返回代理
+    # 不使用tls直接配置代理
+    # 只有 use_proxy为true 才会查询代理 如果 use_proxy为false proxy直接返回空
+    # 直接存储在内存 server只有一个  根据域名以及策略   domain + interface + account
+    # 注意 如果涉及到 cookie 和 ip 绑定的情况  如何处理
+    # 外部 http 指定需要那个账户  x-rely-account=xxx
+    # 代理ip有一定的下发策略   主动查询？？ gin提供
+    proxy = os.environ.get('PROXY_IP')
+    result = await plugin_invoker.invoke(
+        plugin, url, method, headers, body
+    )
+
     try:
         async with httpx.AsyncClient(
                 proxy=proxy if plugin.use_proxy and plugin.bypass_type == BypassType.RAW else None,

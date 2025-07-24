@@ -2,17 +2,19 @@ import importlib
 import os
 from abc import abstractmethod
 from enum import Enum
-from typing import Dict, Optional
+from typing import Dict, Any
 
 from loguru import logger
 from pydantic import BaseModel, Field
+
+from utils.header_utils import random_ua
 
 
 class RequestModel(BaseModel):
     url: str
     method: str
-    headers: Optional[Dict[str, str]] = {}
-    body: Optional[Dict] = Field(default=None, alias="json")
+    headers: Dict[str, str] = Field(default_factory=dict)
+    body: Dict[str, Any] = Field(default_factory=dict, alias="json")
 
     class Config:
         populate_by_name = True
@@ -35,8 +37,18 @@ class BasePlugin:
     timeout = 5
 
     @abstractmethod
-    def invoke(self, url, method, headers, body=None) -> RequestModel:
+    def invoke(self, url, method, headers: Dict[str, str], body: Dict[str, Any]) -> RequestModel:
         raise NotImplementedError("Subclasses must implement this method")
+
+
+class CommonPlugin(BasePlugin):
+    use_proxy = True
+    timeout = 10
+
+    def invoke(self, url, method, headers: Dict[str, str], body: Dict[str, Any]) -> RequestModel:
+        if 'user-agent' not in headers:
+            headers['user-agent'] = random_ua
+        return RequestModel(url=url, method=method, headers=headers, json=body)
 
 
 class PluginManager:
@@ -54,7 +66,7 @@ class PluginManager:
             self.plugins[instance_obj.domain] = instance_obj
 
     def get(self, domain: str) -> BasePlugin:
-        return self.plugins.get(domain)
+        return self.plugins.get(domain, CommonPlugin())
 
 
 plugin_manager = PluginManager()
