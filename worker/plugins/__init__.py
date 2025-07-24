@@ -28,10 +28,12 @@ class BypassType(Enum):
 class BasePlugin:
     domain: str
 
-    use_process: bool = False  # 是否使用进程模式执行
+    # 请求配置
     use_proxy: bool = False  # 是否使用代理
     bypass_type: BypassType = BypassType.RAW  # 使用什么请求类型
 
+    # 运行配置
+    use_process: bool = False  # 是否使用进程模式执行
     timeout = 5
 
     @abstractmethod

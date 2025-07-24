@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 import socketio
 import uvicorn
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from loguru import logger
 
@@ -10,6 +11,7 @@ from app.router import router
 from plugins import load_plugins
 from utils.exceptions import register_exception
 
+load_dotenv()
 sio_client: socketio.AsyncClient = socketio.AsyncClient(
     reconnection=True,
     reconnection_attempts=5,
