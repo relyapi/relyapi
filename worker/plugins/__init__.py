@@ -7,8 +7,6 @@ from typing import Dict, Optional
 from loguru import logger
 from pydantic import BaseModel, Field
 
-from utils.exceptions import DomainNotFound
-
 
 class RequestModel(BaseModel):
     url: str
@@ -56,10 +54,7 @@ class PluginManager:
             self.plugins[instance_obj.domain] = instance_obj
 
     def get(self, domain: str) -> BasePlugin:
-        plugin = self.plugins.get(domain)
-        if plugin is None:
-            raise DomainNotFound()
-        return plugin
+        return self.plugins.get(domain)
 
 
 plugin_manager = PluginManager()
