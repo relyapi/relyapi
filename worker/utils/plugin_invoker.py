@@ -8,16 +8,16 @@ class PluginInvoker:
     def __init__(self, max_threads: int = 10):
         self.executor = ThreadPoolExecutor(max_workers=max_threads)
 
-    async def invoke(self, plugin, *args, timeout=5, use_process=False):
+    async def invoke(self, plugin, *args):
         """
         调用插件：支持同步/异步，线程/进程模式。
         """
         if inspect.iscoroutinefunction(plugin.invoke):
-            return await self._invoke_async(plugin, *args, timeout=timeout)
-        elif use_process:
-            return await self._invoke_in_process(plugin, *args, timeout=timeout)
+            return await self._invoke_async(plugin, *args, timeout=plugin.timeout)
+        elif plugin.use_process:
+            return await self._invoke_in_process(plugin, *args, timeout=plugin.timeout)
         else:
-            return await self._invoke_in_thread(plugin, *args, timeout=timeout)
+            return await self._invoke_in_thread(plugin, *args, timeout=plugin.timeout)
 
     async def _invoke_async(self, plugin, *args, timeout):
         return await asyncio.wait_for(plugin.invoke(*args), timeout=timeout)
