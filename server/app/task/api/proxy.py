@@ -1,5 +1,4 @@
-from fastapi import APIRouter
-from starlette.requests import Request
+from fastapi import APIRouter, Request
 
 router = APIRouter(
     prefix='/proxy',

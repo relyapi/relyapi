@@ -9,6 +9,7 @@ from loguru import logger
 
 from app.router import router
 from plugins import load_plugins
+from utils.common_utils import get_local_ip
 from utils.exceptions import register_exception
 
 load_dotenv()
@@ -24,13 +25,13 @@ RELY_SOCKETIO_ADDRESS = os.environ.get('RELY_SOCKETIO_ADDRESS', 'http://127.0.0.
 async def lifespan(app: FastAPI):
     # 加载插件
     load_plugins(os.getcwd())
-    # await sio_client.connect(RELY_SOCKETIO_ADDRESS)
-    # await sio_client.emit("register", {"msg": "Hello from FastAPI"})
+    await sio_client.connect(RELY_SOCKETIO_ADDRESS)
+    await sio_client.emit("register", {"ip": get_local_ip()})
 
     logger.info("Startup event is done.")
 
     yield
-    # await sio_client.disconnect()
+    await sio_client.disconnect()
     logger.info("shutdown event is done.")
 
 

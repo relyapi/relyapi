@@ -1,4 +1,5 @@
 import hashlib
+import socket
 
 import httpx
 import tldextract
@@ -35,3 +36,17 @@ def gen_md5(content):
     md5 = hashlib.md5()
     md5.update(content.encode())
     return md5.hexdigest()
+
+
+def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+    return ip
+
+
+if __name__ == '__main__':
+    print(f"本机内网 IP: {get_local_ip()}")

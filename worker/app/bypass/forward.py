@@ -23,8 +23,7 @@ plugin_invoker = PluginInvoker()
 @router.post("/forward")
 async def forward(request: Request):
     """
-    插件会修改 添加cooKie等
-    根据domain进行获取插件
+    代理转发
     :param request:
     :return:
     """
@@ -39,15 +38,8 @@ async def forward(request: Request):
     logger.info(f"domain: {domain}")
 
     plugin = plugin_manager.get(domain)
-    # 走账号代理池   看是否可以借鉴 openclash 进行代理  根据域名进行自动路由
-    # 基于 clash 进行二次开发
-    # 使用隧道代理 封装隧道代理 根据用户名自行返回代理
-    # 不使用tls直接配置代理
-    # 只有 use_proxy为true 才会查询代理 如果 use_proxy为false proxy直接返回空
-    # 直接存储在内存 server只有一个  根据域名以及策略   domain + interface + account
-    # 注意 如果涉及到 cookie 和 ip 绑定的情况  如何处理
-    # 外部 http 指定需要那个账户  x-rely-account=xxx
-    # 代理ip有一定的下发策略   主动查询？？ gin提供
+
+    # 在 server端配置 socket.io 推送
     proxy = os.environ.get('PROXY_IP')
     result = await plugin_invoker.invoke(
         plugin, url, method, headers, body

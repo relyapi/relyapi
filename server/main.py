@@ -3,7 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from app.router import router
-from app.task import sio
+from app.task.server import sio
 
 app = FastAPI(root_path='/rely/server')
 socketio_app = socketio.ASGIApp(sio, app)
