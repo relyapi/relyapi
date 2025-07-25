@@ -13,7 +13,7 @@ from utils.tls_utils import tls_factory
 
 router = APIRouter(
     prefix='/bypass',
-    tags=['代理服务'],
+    tags=['透传服务'],
     responses={404: {'description': 'Not found'}},
 )
 
@@ -39,7 +39,6 @@ async def forward(request: Request):
 
     plugin = plugin_manager.get(domain)
 
-    # 在 server端配置 socket.io 推送
     proxy = os.environ.get('PROXY_IP')
     result = await plugin_invoker.invoke(
         plugin, url, method, headers, body
