@@ -3,10 +3,12 @@ import os
 import httpx
 from fastapi import Request, APIRouter
 from loguru import logger
+from relyapi.manager import plugin_manager
+from relyapi.plugin import BypassType
 from starlette.responses import Response
 
-from plugins import plugin_manager, BypassType
-from utils.common_utils import extract_main_domain, fetch_with_retry
+from plugins import CommonPlugin
+from utils.common_utils import extract_main_domain
 from utils.exceptions import HttpxCallFail
 from utils.plugin_invoker import PluginInvoker
 from utils.tls_utils import tls_factory
@@ -37,20 +39,27 @@ async def forward(request: Request):
 
     logger.info(f"domain: {domain}")
 
-    plugin = plugin_manager.get(domain)
+    x_rely_timeout = headers.get("x-rely-timeout") or 5
+    # 支持的协议："http", "https", "socks5", "socks5h"
+    # http://user:pwd@ip:port
+    # 外部如果传递ip，使用relyapi随机ip，当请求的网站是国内网站将使用国内ip，否则使用国外ip
+    x_rely_proxy = headers.get("x-rely-proxy", os.environ.get('RELY_TUNNEL_PROXY'))
+    logger.info(f"x_rely_proxy: {x_rely_proxy}")
 
-    proxy = os.environ.get('PROXY_IP')
+    plugin = plugin_manager.get(domain) or CommonPlugin()
+
     result = await plugin_invoker.invoke(
         plugin, url, method, headers, body
     )
 
     try:
         async with httpx.AsyncClient(
-                proxy=proxy if plugin.use_proxy and plugin.bypass_type == BypassType.RAW else None,
-                transport=tls_factory(proxy) if plugin.bypass_type == BypassType.TLS else None,
-                timeout=5
+                proxy=x_rely_proxy if plugin.use_proxy and plugin.bypass_type == BypassType.RAW else None,
+                transport=tls_factory(x_rely_proxy) if plugin.bypass_type == BypassType.TLS else None,
+                timeout=x_rely_timeout,
+                verify=False
         ) as client:
-            resp = await fetch_with_retry(client, result.model_dump(by_alias=True))
+            resp = await client.request(**result.model_dump(by_alias=True))
             return Response(
                 content=resp.content,
                 status_code=resp.status_code,

@@ -5,6 +5,9 @@
 *.so
 *.dylib
 
+tests/*.mmdb
+tests/*.xdb
+
 # Test binary, built with `go test -c`
 *.test
 

@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from loguru import logger
 
 from app.router import router
-from plugins import load_plugins
+from relyapi.manager import load_plugins
 from utils.exceptions import register_exception
 
 load_dotenv()
