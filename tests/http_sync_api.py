@@ -51,4 +51,4 @@ print(end - start)
 # decoded_text = detected.text if detected else resp.content.decode('utf-8', errors='replace')
 
 
-print(client.get(url='https://www.taobao.com').text)
+print(client.get(url='https://www.baidu.com').text)

@@ -2,11 +2,9 @@ from urllib.parse import urlparse, parse_qs
 
 import requests
 from cachetools import TTLCache
-from tenacity import retry, stop_after_attempt, wait_exponential
-
 from relyapi.plugin import BasePlugin, RequestModel
-from relyapi.utils import replace_cookie, replace_query_param
-from utils.common_utils import gen_md5
+from relyapi.utils import replace_cookie, replace_query_param, gen_md5
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 retry_strategy = retry(
     stop=stop_after_attempt(3),

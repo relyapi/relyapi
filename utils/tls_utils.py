@@ -12,6 +12,8 @@ def tls_factory(proxy: str):
         proxy=proxy,
         default_headers=True,
         # required for parallel requests, see curl_cffi issues below
-        curl_options={CurlOpt.FRESH_CONNECT: True})
+        curl_options={CurlOpt.FRESH_CONNECT: True},
+        verify=False
+    )
 
     return transport

@@ -1,21 +1,9 @@
 import importlib
 import os
-from typing import Dict, Any
+from typing import Dict
 
 from loguru import logger
-
-from relyapi.plugin import BasePlugin, RequestModel
-from relyapi.utils import random_ua
-
-
-class CommonPlugin(BasePlugin):
-    use_proxy = True
-    timeout = 10
-
-    def invoke(self, url, method, headers: Dict[str, str], body: Dict[str, Any]) -> RequestModel:
-        if 'user-agent' not in headers:
-            headers['user-agent'] = random_ua
-        return RequestModel(url=url, method=method, headers=headers, json=body)
+from relyapi.plugin import BasePlugin
 
 
 class PluginManager:
@@ -33,7 +21,7 @@ class PluginManager:
             self.plugins[instance_obj.domain] = instance_obj
 
     def get(self, domain: str) -> BasePlugin:
-        return self.plugins.get(domain, CommonPlugin())
+        return self.plugins.get(domain)
 
 
 plugin_manager = PluginManager()
