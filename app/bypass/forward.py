@@ -3,10 +3,10 @@ import os
 import httpx
 from fastapi import Request, APIRouter
 from loguru import logger
-from starlette.responses import Response
-
 from relyapi.manager import plugin_manager
 from relyapi.plugin import BypassType
+from starlette.responses import Response
+
 from utils.common_utils import extract_main_domain, fetch_with_retry
 from utils.exceptions import HttpxCallFail
 from utils.plugin_invoker import PluginInvoker
@@ -38,6 +38,9 @@ async def forward(request: Request):
 
     logger.info(f"domain: {domain}")
 
+    x_rely_timeout = headers.get("x-rely-timeout") or 5
+    x_rely_city = headers.get("x-rely-city")
+
     plugin = plugin_manager.get(domain)
 
     proxy = os.environ.get('PROXY_IP')
@@ -49,7 +52,7 @@ async def forward(request: Request):
         async with httpx.AsyncClient(
                 proxy=proxy if plugin.use_proxy and plugin.bypass_type == BypassType.RAW else None,
                 transport=tls_factory(proxy) if plugin.bypass_type == BypassType.TLS else None,
-                timeout=5
+                timeout=x_rely_timeout
         ) as client:
             resp = await fetch_with_retry(client, result.model_dump(by_alias=True))
             return Response(
