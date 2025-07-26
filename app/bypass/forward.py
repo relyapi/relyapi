@@ -5,7 +5,8 @@ from fastapi import Request, APIRouter
 from loguru import logger
 from starlette.responses import Response
 
-from plugins import plugin_manager, BypassType
+from relyapi.manager import plugin_manager
+from relyapi.plugin import BypassType
 from utils.common_utils import extract_main_domain, fetch_with_retry
 from utils.exceptions import HttpxCallFail
 from utils.plugin_invoker import PluginInvoker

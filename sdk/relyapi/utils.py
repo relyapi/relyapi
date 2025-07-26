@@ -1,4 +1,30 @@
+import hashlib
 import random
+from http.cookies import SimpleCookie
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+
+
+def replace_query_param(url: str, key: str, value: str) -> str:
+    parsed = urlparse(url)
+    query = parse_qs(parsed.query)
+    query[key] = [value]  # 替换或添加 key
+    new_query = urlencode(query, doseq=True)
+    new_url = parsed._replace(query=new_query)
+    return urlunparse(new_url)
+
+
+def replace_cookie(cookie_str: str, key: str, new_value: str) -> str:
+    cookie = SimpleCookie()
+    cookie.load(cookie_str)
+    cookie[key] = new_value
+    return "; ".join([f"{k}={v.value}" for k, v in cookie.items()])
+
+
+def gen_md5(content):
+    md5 = hashlib.md5()
+    md5.update(content.encode())
+    return md5.hexdigest()
+
 
 # https://github.com/jnrbsn/user-agents
 user_agent = [
