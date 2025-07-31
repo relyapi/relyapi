@@ -39,3 +39,6 @@ ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
 # Copy source code
 COPY . /app/api
+
+# cmd
+ENTRYPOINT ["uvicorn", "main:app", "--workers", "4", "--host", "0.0.0.0", "--port", "8000"]
