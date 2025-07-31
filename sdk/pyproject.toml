@@ -1,6 +1,6 @@
 [project]
 name = "relyapi"
-version = "0.1.7"
+version = "0.1.8"
 description = ""
 authors = [
     {name = "fovegage",email = "fovegage@gmail.com"}
