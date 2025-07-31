@@ -1,5 +1,30 @@
 # RelyApi
 
+## 支持
+
+```
+# 部分不能开headless
+
+# 使用定制版的指纹浏览器  打包到镜像  借鉴neko镜像
+
+# 五秒盾
+
+# medium
+https://freedium.cfd/https://medium.com/the-riff/ozzy-osbourne-legacy-of-a-madman-264a0a6c30c5
+
+# zhihu
+
+# 公众号
+https://mp.weixin.qq.com/s/NZej8tbY6Hau6STH_xmYsQ
+
+# 抖音
+
+# 航空
+https://www.jetblue.com/booking/flights?from=HKG&to=HBE&depart=2025-07-28&return=2025-08-27&isMultiCity=false&noOfRoute=1&adults=1&children=0&infants=0&sharedMarket=false&roundTripFaresFlag=false&usePoints=true
+https://github.com/PanGuBase/cdp-navigate/blob/main/note.md
+https://www.vietjetair.com/zh-tw
+```
+
 ## 规划
 
 ```
