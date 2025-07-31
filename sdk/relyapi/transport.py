@@ -2,7 +2,7 @@ import os
 
 import httpx
 
-RELY_API_ADDRESS = os.environ.get("RELY_API_ADDRESS", 'http://127.0.0.1:8000')
+RELY_API_ADDRESS = os.environ.get("RELY_API_ADDRESS", 'https://forwrad.relyapi.com')
 
 
 class ForwardingTransport(httpx.BaseTransport):
