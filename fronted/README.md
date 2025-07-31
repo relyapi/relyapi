@@ -49,7 +49,12 @@ docker-compose up -d --build
 open http://localhost:3000
 ```
 
-3. 停止服务：
+3. 查看日志：
+```bash
+docker-compose logs -f frontend
+```
+
+4. 停止服务：
 ```bash
 docker-compose down
 ```
@@ -63,7 +68,18 @@ docker build -t api-aggregator-frontend .
 
 2. 运行容器：
 ```bash
-docker run -p 3000:3000 api-aggregator-frontend
+docker run -p 3000:3000 --name api-frontend api-aggregator-frontend
+```
+
+3. 查看容器日志：
+```bash
+docker logs -f api-frontend
+```
+
+4. 停止容器：
+```bash
+docker stop api-frontend
+docker rm api-frontend
 ```
 
 ### 生产环境部署
@@ -171,6 +187,46 @@ async function fetchFromPlatform(platform: string): Promise<ApiCard[]> {
 - 错误追踪
 - 访问日志分析
 - 健康检查端点
+
+## 故障排除
+
+### Docker构建失败
+
+如果遇到构建错误，请尝试以下解决方案：
+
+1. **清理Docker缓存**：
+```bash
+docker system prune -a
+```
+
+2. **重新构建镜像**：
+```bash
+docker-compose build --no-cache
+```
+
+3. **检查Node.js版本兼容性**：
+确保使用Node.js 18+版本
+
+4. **检查依赖安装**：
+```bash
+# 本地测试构建
+npm ci
+npm run build
+```
+
+### 常见问题
+
+**Q: 应用启动后无法访问**
+A: 检查端口是否被占用，或尝试使用不同端口：
+```bash
+docker run -p 3001:3000 api-aggregator-frontend
+```
+
+**Q: CSS样式不生效**
+A: 确保Tailwind CSS配置正确，重新构建镜像
+
+**Q: API调用失败**
+A: 检查网络连接和API端点配置
 
 ## 许可证
 
