@@ -19,7 +19,7 @@ async def lifespan(app: FastAPI):
     logger.info("shutdown event is done.")
 
 
-app = FastAPI(root_path='/rely/worker', lifespan=lifespan)
+app = FastAPI(root_path='/api', lifespan=lifespan)
 
 
 @app.get("/healthz")
