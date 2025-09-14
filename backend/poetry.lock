@@ -49,14 +49,14 @@ files = [
 
 [[package]]
 name = "certifi"
-version = "2025.7.14"
+version = "2025.8.3"
 description = "Python package for providing Mozilla's CA Bundle."
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "certifi-2025.7.14-py3-none-any.whl", hash = "sha256:6b31f564a415d79ee77df69d757bb49a5bb53bd9f756cbbe24394ffd6fc1f4b2"},
-    {file = "certifi-2025.7.14.tar.gz", hash = "sha256:8ea99dbdfaaf2ba2f9bac77b9249ef62ec5218e7c2b2e903378ed5fccf765995"},
+    {file = "certifi-2025.8.3-py3-none-any.whl", hash = "sha256:f6c12493cfb1b06ba2ff328595af9350c65d6644968e5d3a2ffd78699af217a5"},
+    {file = "certifi-2025.8.3.tar.gz", hash = "sha256:e564105f78ded564e3ae7c923924435e1daa7463faeab5bb932bc53ffae63407"},
 ]
 
 [[package]]
@@ -862,14 +862,14 @@ cli = ["click (>=5.0)"]
 
 [[package]]
 name = "relyapi"
-version = "0.1.8"
+version = "0.1.9"
 description = ""
 optional = false
 python-versions = "<3.15,>=3.10"
 groups = ["main"]
 files = [
-    {file = "relyapi-0.1.8-py3-none-any.whl", hash = "sha256:1d16e63e4fc527bd3814cd815c179cd7d1c1668dc9c5405b217caef2f65ce088"},
-    {file = "relyapi-0.1.8.tar.gz", hash = "sha256:cb94d82b2bdd2219df5787011f7e317319c15ca959190ebe1b6938252b59f37e"},
+    {file = "relyapi-0.1.9-py3-none-any.whl", hash = "sha256:4a3eb5d550d64508a17bc60a5696da4ec80eea9b7ae4277fef74e67dedda8404"},
+    {file = "relyapi-0.1.9.tar.gz", hash = "sha256:fad2473797674f7115448cd17f54c2c312029295a71224b04bf3e038a90b9300"},
 ]
 
 [package.dependencies]

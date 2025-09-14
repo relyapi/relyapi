@@ -3,6 +3,7 @@ import os
 import httpx
 from fastapi import Request, APIRouter
 from loguru import logger
+from relyapi.invoke import PluginInvoker
 from relyapi.plugin import BypassType
 from starlette.responses import Response
 
@@ -10,7 +11,6 @@ from utils.common_utils import extract_main_domain
 from utils.exceptions import HttpxCallFail
 from utils.plugin import CommonPlugin
 from utils.plugin import plugin_manager
-from utils.plugin_invoker import PluginInvoker
 from utils.tls_utils import tls_factory
 
 router = APIRouter(
@@ -46,6 +46,7 @@ async def forward(request: Request):
     x_rely_proxy = headers.get("x-rely-proxy", os.environ.get('RELY_TUNNEL_PROXY'))
     logger.info(f"x_rely_proxy: {x_rely_proxy}")
 
+    # 使用redis   使用 socket.io 是不是好管理
     plugin = plugin_manager.get(domain) or CommonPlugin()
 
     result = await plugin_invoker.invoke(

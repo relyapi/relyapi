@@ -1,0 +1,13 @@
+proxy.relyapi.com {
+    root * /usr/share/caddy
+    file_server
+
+    # Vue history 模式需要 fallback 到 index.html
+    try_files {path} /index.html
+
+    # API 代理示例
+    @api {
+        path /api/*
+    }
+    reverse_proxy @api relyapi_server:8000
+}

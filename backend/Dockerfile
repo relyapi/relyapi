@@ -1,44 +1,50 @@
-# base image
-FROM registry.cn-beijing.aliyuncs.com/biyao/public:py310-v3 AS base
+# Select the image to build based on SERVER_TYPE, defaulting to fastapi_server, or docker-compose build args
+ARG SERVER_TYPE=fastapi_server
 
-WORKDIR /app/api
+# === Python environment from uv ===
+FROM astral/uv:python3.12-bookworm-slim AS builder
 
-# Install Poetry
-ENV POETRY_VERSION=2.1
-RUN pip install --no-cache-dir poetry==${POETRY_VERSION}
+# Used for build Python packages
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends gcc python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Configure Poetry
-ENV POETRY_CACHE_DIR=/tmp/poetry_cache
-ENV POETRY_NO_INTERACTION=1
-ENV POETRY_VIRTUALENVS_IN_PROJECT=true
-ENV POETRY_VIRTUALENVS_CREATE=true
-ENV POETRY_REQUESTS_TIMEOUT=60
+COPY . /relyapi
 
-FROM base AS packages
+WORKDIR /relyapi
 
-# Install Python dependencies
-COPY pyproject.toml poetry.lock ./
-RUN poetry install --sync --no-cache --no-root
+# Configure uv environment
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_NO_CACHE=1 \
+    UV_LINK_MODE=copy \
+    UV_PROJECT_ENVIRONMENT=/usr/local
 
-# production stage
-FROM base AS production
+# Install dependencies with cache
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-default-groups --group server
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl nodejs
+# === Runtime base server image ===
+FROM python:3.12-slim AS base_server
+
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /relyapi /relyapi/backend
+
+COPY --from=builder /usr/local /usr/local
+
+COPY deploy/supervisord.conf /etc/supervisor/supervisord.conf
+
+WORKDIR /relyapi/backend
+
+# === FastAPI server image ===
+FROM base_server AS fastapi_server
+
+COPY deploy/server.conf /etc/supervisor/conf.d/
+
+RUN mkdir -p /var/log/fastapi_server
 
 EXPOSE 8000
-
-# set timezone
-ENV TZ=UTC
-
-WORKDIR /app/api
-
-# Copy Python environment and packages
-ENV VIRTUAL_ENV=/app/api/.venv
-COPY --from=packages ${VIRTUAL_ENV} ${VIRTUAL_ENV}
-ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
-
-# Copy source code
-COPY . /app/api
-
-# cmd
-ENTRYPOINT ["uvicorn", "main:app", "--workers", "4", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,0 +1,92 @@
+services:
+  relyapi_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: relyapi-frontend
+    image: relyapi-frontend:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./frontend/deploy/.env.production:/app/.env
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - relyapi_network
+    depends_on:
+      - relyapi_server
+    restart: always
+
+  relyapi_server:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: relyapi-server:latest
+    container_name: relyapi-server
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - relyapi_mysql
+      - relyapi_redis
+    volumes:
+      - ./backend/deploy/.env.server:/relyapi/backend/.env
+    networks:
+      - relyapi_network
+    command:
+      - bash
+      - -c
+      - |
+        wait-for-it -s wemcp_mysql:3306 -s wemcp_redis:6379 -t 300
+        supervisord -c /etc/supervisor/supervisord.conf
+        supervisorctl restart
+
+  relyapi_mysql:
+    image: mysql:8.0.41
+    ports:
+      - "${DOCKER_MYSQL_MAP_PORT:-3306}:3306"
+    container_name: relyapi-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: relyapi
+      MYSQL_ROOT_PASSWORD: 123456
+      TZ: Asia/Shanghai
+    volumes:
+      - relyapi_mysql:/var/lib/mysql
+    networks:
+      - relyapi_network
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --lower_case_table_names=1
+
+  relyapi_redis:
+    image: redis
+    ports:
+      - "${DOCKER_REDIS_MAP_PORT:-6379}:6379"
+    container_name: relyapi-redis
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - relyapi_redis:/data
+    networks:
+      - relyapi_network
+
+networks:
+  relyapi_network:
+    name: relyapi_network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.10.10.0/24
+
+volumes:
+  relyapi_mysql:
+    name: relyapi_mysql
+  relyapi_redis:
+    name: relyapi_redis
+
